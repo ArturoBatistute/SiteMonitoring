@@ -5,7 +5,11 @@ import "net/http"
 import "os"
 import "time"
 
+const delayUntilNextMonitoring = 5
+
 func main(){
+
+	readSitesFromFile()
 
 	for {
 		showMenu()
@@ -50,7 +54,7 @@ func monitoring(timesToExecute int){
 	for i := 0; i < timesToExecute; i++ {
 
 		monitoringRun()
-		time.Sleep(5 * time.Second)
+		time.Sleep(delayUntilNextMonitoring * time.Second)
 	}
 
 	fmt.Println()
@@ -58,11 +62,15 @@ func monitoring(timesToExecute int){
 
 func monitoringRun(){
 
-	siteUrlList := []string {"https://www.google.com", "https://www.linkedin.com"}
+	siteUrlList := readSitesFromFile()
 	
 	for _,site := range siteUrlList{
 
-		response,_ := http.Get(site)
+		response, err := http.Get(site)
+
+		if err != nil {
+			fmt.Println(err)
+		}
 
 		if response.StatusCode == 200 {
 			fmt.Println(site, "is Up!")
@@ -70,4 +78,19 @@ func monitoringRun(){
 			fmt.Println(site, "is Down, returned status:", response.StatusCode)
 		}
 	}
+}
+
+func readSitesFromFile() []string {
+
+	file, err := os.Open("sites.txt")
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	fmt.Fprintln(file)
+
+	var slice []string
+
+	return slice
 }
