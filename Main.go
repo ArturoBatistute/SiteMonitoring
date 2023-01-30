@@ -3,6 +3,7 @@ package main
 import "fmt"
 import "net/http"
 import "os"
+import "time"
 
 func main(){
 
@@ -30,7 +31,7 @@ func userChoice(){
 
 	switch command{
 	case 1:
-		monitoring()
+		monitoring(3)
 	case 2:
 		println("Logging..")
 	case 0:
@@ -42,9 +43,20 @@ func userChoice(){
 	}
 }
 
-func monitoring(){
+func monitoring(timesToExecute int){
 
 	println("Monitoring..")
+
+	for i := 0; i < timesToExecute; i++ {
+
+		monitoringRun()
+		time.Sleep(5 * time.Second)
+	}
+
+	fmt.Println()
+}
+
+func monitoringRun(){
 
 	siteUrlList := []string {"https://www.google.com", "https://www.linkedin.com"}
 	
@@ -58,6 +70,4 @@ func monitoring(){
 			fmt.Println(site, "is Down, returned status:", response.StatusCode)
 		}
 	}
-
-	fmt.Println()
 }
