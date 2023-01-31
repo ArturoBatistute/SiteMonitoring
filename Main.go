@@ -1,9 +1,14 @@
 package main
 
-import "fmt"
-import "net/http"
-import "os"
-import "time"
+import (
+	"bufio"
+	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+	"time"
+)
 
 const delayUntilNextMonitoring = 5
 
@@ -82,15 +87,24 @@ func monitoringRun(){
 
 func readSitesFromFile() []string {
 
+	var siteSlice []string
+
 	file, err := os.Open("sites.txt")
 
 	if err != nil {
 		fmt.Println(err)
 	}
 
-	fmt.Fprintln(file)
+	reader := bufio.NewReader(file)
 
-	var slice []string
+	for {
+		line, err := reader.ReadString('\n')
+		siteSlice = append(siteSlice, strings.TrimSpace(line))
 
-	return slice
+		if err == io.EOF {
+			break
+		}
+	}
+	file.Close()
+	return siteSlice
 }
