@@ -26,7 +26,6 @@ func showMenu(){
 
 	fmt.Println("Choose an option:")
 	fmt.Println("1- Monitoring")
-	fmt.Println("2- Logs")
 	fmt.Println("0- Exit")
 	fmt.Println()
 }
@@ -41,8 +40,6 @@ func userChoice(){
 	switch command{
 	case 1:
 		monitoring(3)
-	case 2:
-		println("Logging..")
 	case 0:
 		println("Exiting..")
 		os.Exit(0)
