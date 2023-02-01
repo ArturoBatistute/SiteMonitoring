@@ -6,15 +6,15 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 )
 
 const delayUntilNextMonitoring = 5
+const logFileName = "log.txt"
 
 func main(){
-
-	readSitesFromFile()
 
 	for {
 		showMenu()
@@ -78,8 +78,10 @@ func monitoringRun(){
 		}
 
 		if response.StatusCode == 200 {
+			logRegister(site, true)
 			fmt.Println(site, "is Up!")
 		}else {
+			logRegister(site, false)
 			fmt.Println(site, "is Down, returned status:", response.StatusCode)
 		}
 	}
@@ -107,4 +109,18 @@ func readSitesFromFile() []string {
 	}
 	file.Close()
 	return siteSlice
+}
+
+func logRegister(site string, status bool){
+
+	file,err := os.OpenFile(logFileName, os.O_RDWR | os.O_CREATE | os.O_APPEND, 0666)
+
+	if(err != nil){
+		os.Create("log.txt")
+	}
+
+	var timestamp string = time.Now().Format("02/01/2006 15:04:05")
+
+	file.WriteString(timestamp + " " + site + " online:" + strconv.FormatBool(status) + "\n")
+	file.Close()
 }
